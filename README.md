@@ -30,11 +30,11 @@ A mobile-first, accessible, front-end-only online bookstore: browse, search, fil
 |---|---|
 | Lighthouse Accessibility / Best Practices / SEO | **100 / 100 / 100** on Home, Books, and Detail |
 | Lighthouse Performance (desktop) | **95–99** |
-| Lighthouse Performance (mobile, throttled) | **84–93**; CLS **0** on every page |
+| Lighthouse Performance (mobile, throttled) | **82–93** depending on machine load; CLS **0** on every page |
 | axe-core (WCAG 2.1 A/AA + best practices) | 0 violations on 7 routes at 375px and 1440px |
 | TypeScript | `strict`, `noUnusedLocals`, `noUnusedParameters`, `verbatimModuleSyntax` |
 | Lint (oxlint with `jsx-a11y`) | 0 warnings, 0 errors |
-| Scripted E2E flows (Playwright) | 20/20 passing: menu, search, cart, checkout, auth, 404s |
+| Scripted E2E + a11y (`npm run test:e2e`) | 22/22 passing: menu, search, cart, checkout, auth, 404s, axe scan |
 
 Accessibility details: skip link, labelled landmarks, `aria-live` result counts, `aria-invalid`/`aria-describedby` on form errors, keyboard-focusable scroll regions, `prefers-reduced-motion` support, per-route document titles, and WCAG AA colour contrast.
 
@@ -58,7 +58,22 @@ npm run dev        # http://127.0.0.1:5173
 npm run build      # type-check + production build
 npm run preview    # serve the production build
 npm run lint       # oxlint (includes jsx-a11y rules)
+npm run typecheck  # tsc -b
 ```
+
+### Verification scripts
+
+Both need Google Chrome installed and the app running.
+
+```bash
+npm run dev &              # terminal 1: app on :5173
+npm run test:e2e           # user flows + axe accessibility scan (e2e/flows.mjs)
+
+npm run build && npm run preview &   # production build on :4173
+npm run perf               # Lighthouse scores for Home, Books, Detail (e2e/lighthouse.mjs)
+```
+
+Set `BASE_URL` to point either script at a different host.
 
 ## Project structure
 
@@ -77,6 +92,7 @@ src/
   data/        books.ts (catalogue)
   pages/       Home, Books, BookDetail, Cart, Checkout, Login, Register, NotFound
   types/       shared types
+e2e/           Playwright flows + Lighthouse scripts
 ```
 
 ## Design decisions
